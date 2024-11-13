@@ -1,0 +1,333 @@
+WindowManager:
+    orientation: 'vertical'
+    TranscribeWindow:
+    SummaryWindow:
+
+<TranscribeWindow>:
+    name: 'transcribe'
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 232/255, 230/255, 231/255, 1
+        MDToolbar:
+            title: 'PyVidNote'
+            md_bg_color: 1,1,1,1
+            specific_text_color: [0.5, 0.5, 1, 1]
+            anchor_title: 'center'
+            size_hint: 1, 0.1
+            canvas.before:
+                Color:
+                    rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 0, -3
+                    blur_radius: 1
+        MDGridLayout:
+            cols: 3
+            size_hint: 1, 0.08
+            padding: 0, 0, 0, 20 
+            pos_hint: {'center_x': 0.5, 'center_y': 0.94}
+            Button:
+                text: 'Transcribe'
+                color: 0.5, 0.5, 1, 1
+                background_color: 1, 1, 1, 1
+                background_down: ''
+                background_normal: ''
+                state: 'down'
+                canvas.after:
+                    Color:
+                        rgba: 0.5, 0.5, 1, 1  
+                    Line:
+                        points: (self.x, self.y, self.right, self.y)
+                        width: 1.5
+            Button:
+                text: 'Summary'
+                color: 0, 0, 0, 1
+                background_color: 1, 1, 1, 1
+                background_down: ''
+                background_normal: ''
+                on_press: app.switch_to_summary()
+                canvas.before:
+                    Color:
+                        rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                    BoxShadow:
+                        pos: self.pos
+                        size: self.size
+                        offset: 0, -3
+                        blur_radius: 1
+        MDCard:
+            orientation: "vertical"
+            padding: 0, 0, 0, "12dp"
+            size_hint: None, .3
+            width: "305dp"
+            style: "elevated"
+            elevation: 0
+            pos_hint: {"center_x": .5, "center_y": .5}
+            canvas.before:
+                Color:
+                    rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 4, -4
+                    blur_radius: 5
+            MDBoxLayout:
+                orientation: 'vertical'
+                cols: 1
+                size_hint: 0.8, 0.3
+                pos_hint: {'center_x': 0.5,}
+                MDTextField:
+                    id: url
+                    size_hint_x: 1
+                    pos_hint: {'center_x': 0.5}
+                    hint_text: "Enter the video URL"
+                    helper_text: "Example: https://www.youtube.com/watch"
+                    helper_text_mode: "on_focus"
+                    line_color_normal: 0.5, 0.5, 1, 1
+                MDTextField:
+                    id: file_path
+                    size_hint_x: 1
+                    pos_hint: {'center_x': 0.5}
+                    hint_text: "File Path"
+                    helper_text: "Use the upload button to enter the video file"
+                    helper_text_mode: "on_focus"
+                    readonly: True
+                    line_color_normal: 0.5, 0.5, 1, 1
+                    icon_right: 'file-upload'
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: 8, 12
+                size_hint: 0.8, .15
+                pos_hint: {'center_x': 0.5,}
+                Button:
+                    text: 'Upload file'
+                    background_normal: ''
+                    bold: True
+                    background_color: 0.5, 0.5, 1, 1
+                    on_release: root.file_chooser()
+                    canvas.before:
+                        Color:
+                            rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                        BoxShadow:
+                            pos: self.pos
+                            size: self.size
+                            offset: 4, -4
+                            blur_radius: 10
+      
+          
+        MDGridLayout:
+            cols: 3
+            size_hint: None, 0.1
+            width: "305dp"
+            pos_hint: {'center_x': 0.5}
+            padding: 20
+            Button:
+                text: 'Transcribe'
+                bold: True
+                background_normal: ''
+                background_color: 0.5, 0.5, 1, 1
+                on_release: root.transcribe()
+                canvas.before:
+                    Color:
+                        rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                    BoxShadow:
+                        pos: self.pos
+                        size: self.size
+                        offset: 4, -4
+                        blur_radius: 5
+            MDIconButton:
+                icon: 'content-copy'
+                on_press: root.copy_text()
+            MDIconButton:
+                icon: 'delete'
+                on_press: app.show_alert_dialog()
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 12
+            size_hint: 0.8, 0.08
+            pos_hint: {'center_x': 0.5}
+            MDProgressBar:
+                id: progress_bar
+                value: 0
+                max: 100
+        ScrollView:
+            size_hint: 1, 0.4  # Adjust height for the scroll view
+            bar_width: 10  # Optional: Adjust scrollbar width
+            
+            MDBoxLayout:
+                padding: 12
+                orientation: 'vertical'
+                size_hint_y: None  # Allow height control
+                height: self.minimum_height  # Adjust height dynamically
+                
+                MDTextField:
+                    id: transcribed_text
+                    hint_text: "Transcribed text will be here"
+                    multiline: True  # Enable multi-line input
+                    fill_color: 0, 0, 0, .05
+                    mode: 'fill'
+                    text_color: 1, 0, 0, 1
+                    halign: 'left'
+                    size_hint_x: 0.8  # Adjust width for better centering
+                    size_hint_y: None  # Use height instead of size hint
+                    height: self.minimum_height  # Adjust height based on content
+                    text: ""
+                    padding: 50, 50  # Adjust padding
+                    pos_hint: {'center_x': 0.5}  # Center horizontally
+<SummaryWindow>:
+    name: "summary"
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 232/255, 230/255, 231/255, 1
+        MDToolbar:
+            title: 'PyVidNote'
+            md_bg_color: 1,1,1,1
+            specific_text_color: [0.5, 0.5, 1, 1]
+            anchor_title: 'center'
+            size_hint: 1, 0.1
+            canvas.before:
+                Color:
+                    rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 0, -3
+                    blur_radius: 1
+        MDGridLayout:
+            cols: 2
+            size_hint: 1, 0.08
+            padding: 0, 0, 0, 20 
+            pos_hint: {'center_x': 0.5, 'center_y': 0.94}
+            Button:
+                text: 'Transcribe'
+                color: 0, 0, 0, 1
+                background_down: ''
+                background_normal: ''
+                on_press: app.switch_to_transcribe()
+                canvas.before:
+                    Color:
+                        rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                    BoxShadow:
+                        pos: self.pos
+                        size: self.size
+                        offset: 0, -3
+                        blur_radius: 1
+            Button:
+                text: 'Summary'
+                color: 0.5, 0.5, 1, 1
+                background_down: ''
+                background_normal: ''
+                on_state: 'down'
+                canvas.after:
+                    Color:
+                        rgba: 0.5, 0.5, 1, 1  
+                    Line:
+                        points: (self.x, self.y, self.right, self.y)
+                        width: 1.5
+        MDCard:
+            orientation: "vertical"
+            padding: 0, 0, 0, "12dp"
+            size_hint: None, .3
+            width: "305dp"
+            style: "elevated"
+            elevation: 0
+            pos_hint: {"center_x": .5, "center_y": .48}
+            canvas.before:
+                Color:
+                    rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 4, -4
+                    blur_radius: 5
+            MDBoxLayout:
+                orientation: 'vertical'
+                cols: 1
+                size_hint: 0.8, 0.1
+                pos_hint: {'center_x': 0.5,}
+                MDLabel:
+                    padding: 0, 8, 0, 0
+                    text: 'Summary Length:'
+                    halign: 'center'
+                MDSlider:
+                    id: length
+                    min: 1
+                    max: 3
+                    value: 2
+                    step: 1
+                    hint: False
+            MDGridLayout:
+                cols: 2
+                size_hint: 0.8, .1
+                pos_hint: {'center_x': 0.5}
+                MDLabel:
+                    text: 'Paragraph:'
+                    halign: 'left'
+                MDSwitch:
+                    id: par
+                    active: True
+                    on_active: root.toggle_switches(self, self.active)
+                MDLabel:
+                    text: 'Bulleted Points:'
+                    halign: 'left'
+                MDSwitch:
+                    id: bulleted
+                    on_active: root.toggle_switches(self, self.active)
+                    
+        MDGridLayout:
+            cols: 3
+            size_hint: None, 0.1
+            width: "305dp"
+            pos_hint: {'center_x': 0.5}
+            padding: 20
+            Button:
+                text: 'Summarize'
+                bold: True
+                background_normal: ''
+                background_color: 0.5, 0.5, 1, 1
+                on_release: root.summarize()
+                canvas.before:
+                    Color:
+                        rgba: 0.83, 0.83, 0.83, 1  # Shadow color
+                    BoxShadow:
+                        pos: self.pos
+                        size: self.size
+                        offset: 4, -4
+                        blur_radius: 5
+            MDIconButton:
+                icon: 'content-copy'
+                on_press: root.copy_text()
+            MDIconButton:
+                icon: 'delete'
+                on_press: app.show_alert_dialog()
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 12
+            size_hint: 0.8, 0.08
+            pos_hint: {'center_x': 0.5}
+            MDProgressBar:
+                id: progress_bar
+                value: 0
+                max: 100
+        ScrollView:
+            size_hint: 1, 0.4  # Adjust height for the scroll view
+            bar_width: 10  # Optional: Adjust scrollbar width
+            MDBoxLayout:
+                padding: 12
+                orientation: 'vertical'
+                size_hint_y: None  # Allow height control
+                height: self.minimum_height  # Adjust height dynamically
+                
+                MDTextField:
+                    id: summarized_text
+                    hint_text: "Summarized text will be here"
+                    multiline: True  # Enable multi-line input
+                    fill_color: 0, 0, 0, .05
+                    mode: 'fill'
+                    halign: 'left'
+                    size_hint_x: 0.8  # Adjust width for better centering
+                    size_hint_y: None  # Use height instead of size hint
+                    height: self.minimum_height  # Adjust height based on content
+                    text: ""
+                    padding: 50, 50  # Adjust padding
+                    pos_hint: {'center_x': 0.5}  # Center horizontally
