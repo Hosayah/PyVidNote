@@ -29,6 +29,6 @@ Ensure the following Python packages are installed:
 pip install kivy kivymd plyer pyperclip torch torchvision torchaudio \
             git+https://github.com/openai/whisper.git \
             transformers
-
+```
 ## Contact
 Email: catabayjosiah19 @gmail.com
